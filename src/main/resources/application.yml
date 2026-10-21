@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: task-management-api
+  datasource:
+    url: jdbc:h2:mem:taskdb;DB_CLOSE_DELAY=-1
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+  h2:
+    console:
+      enabled: false
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  error:
+    include-stacktrace: never
+    include-message: never
+
+taskapi:
+  security:
+    username: ${TASKAPI_USERNAME:}
+    password: ${TASKAPI_PASSWORD:}
