@@ -201,3 +201,5 @@ The `errors` list (with `field` and `message`) is present on validation failures
 ## Data storage
 
 The database is in-memory H2 and the schema is created at startup and dropped at shutdown. All data is lost when the application restarts.
+
+
