@@ -203,3 +203,43 @@ The `errors` list (with `field` and `message`) is present on validation failures
 The database is in-memory H2 and the schema is created at startup and dropped at shutdown. All data is lost when the application restarts.
 
 
+## Frontend (local development only)
+
+The `frontend/` directory contains a React and TypeScript web client for the task API (built with Vite). It is a local-development setup only: it talks to the backend over plain HTTP with HTTP Basic authentication, there is no TLS, and there is no production authentication or deployment setup.
+
+Prerequisite: Node.js, the current active LTS release (no minimum version is pinned), which includes npm.
+
+The backend must be running first, started with `TASKAPI_USERNAME` and `TASKAPI_PASSWORD` set (see "Required environment variables" and "Run" above). You sign in to the web client with those same credentials. Do not commit real values.
+
+Run these commands from the `frontend/` directory:
+
+```sh
+cd frontend
+npm ci              # install the exact versions from package-lock.json
+npm run dev         # start the Vite dev server (http://localhost:5173 by default)
+npm test            # run the unit and component tests once (Vitest)
+npm run lint        # ESLint
+npm run typecheck   # TypeScript check, no output files
+npm run build       # type check, then production build into dist/
+```
+
+The `/api` proxy: the Vite dev server forwards requests under `/api` to `http://localhost:8080` (configured in `frontend/vite.config.ts`), so the browser only talks to the dev server and no CORS setup is needed on the backend. If the backend is not running, the proxy answers with a 502 and the client shows a generic error message.
+
+Credentials:
+
+- The user name and password you type on the login form are held in memory only. The app never writes them to localStorage, sessionStorage, cookies or any other storage. Browser password managers are outside the app's control and may offer to save them.
+- Reloading the page returns to the login form. Signing out discards the credentials.
+- There are no `VITE_` environment variables for credentials. Do not add any: Vite embeds `VITE_` variables in the built JavaScript.
+
+The output of `npm run build` (`frontend/dist/`) has no `/api` proxy and is not deployable as-is. Serving it needs a separate setup that is out of scope here, and anything exposed beyond a local machine needs TLS and a production authentication design.
+
+### Manual browser check (AC-11)
+
+The automated tests cannot show how a real browser reacts to a 401 response, so this check is done by hand in both Chrome and Firefox. Start the backend and `npm run dev`, then in each browser:
+
+1. Open `http://localhost:5173` and sign in with a wrong password. Expected: the page shows "Invalid credentials." and stays on the login form. No native browser login dialog appears.
+2. Sign in with the correct credentials. Expected: the task list loads.
+3. Reload the page. Expected: the login form is shown again, with no native login dialog, and the browser does not send saved or cached credentials (the list is not shown until you sign in again).
+4. Sign in again, then use Sign out. Expected: the login form is shown, no native login dialog appears, and a reload still shows the login form.
+
+Record the result for each browser (pass or fail, browser version) in the stage 7 verification report.
