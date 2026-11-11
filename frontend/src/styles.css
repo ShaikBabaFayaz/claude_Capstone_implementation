@@ -1,0 +1,658 @@
+/* Design tokens: one place for colour, type scale, spacing, radii, shadows. Plain CSS, system fonts only. */
+:root {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --color-bg: #f3f4f6;
+  --color-surface: #ffffff;
+  --color-text: #1f2937;
+  --color-muted: #4b5563;
+  --color-border: #d1d5db;
+  --color-border-strong: #6b7280; /* controls: 4.83:1 on white, 4.39:1 on --color-bg (>= 3:1) */
+  --color-control-hover-bg: #f3f4f6;
+
+  --color-primary: #1d4ed8;
+  --color-primary-hover: #1e40af;
+  --color-on-primary: #ffffff;
+  --color-focus: #1d4ed8;
+
+  --color-danger: #b91c1c;
+  --color-danger-hover: #991b1b;
+  --color-danger-bg: #fef2f2;
+  --color-danger-border: #fca5a5;
+  --color-info-bg: #eff6ff;
+  --color-info-border: #93c5fd;
+  --color-info-text: #1e3a8a;
+
+  --status-todo-bg: #e5e7eb;
+  --status-todo-text: #1f2937;
+  --status-progress-bg: #fef3c7;
+  --status-progress-text: #78350f;
+  --status-done-bg: #dcfce7;
+  --status-done-text: #14532d;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 2px 8px rgba(15, 23, 42, 0.1);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.25);
+
+  --control-height: 2.5rem;
+  --app-bar-height: 3rem;
+  --page-padding: var(--space-4);
+  --z-app-bar: 10; /* below .dialog-backdrop (100) */
+}
+
+html {
+  /* Keep keyboard-focused controls clear of the sticky title bar. */
+  scroll-padding-top: calc(var(--app-bar-height) + var(--space-4));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  margin: 0;
+  padding: var(--page-padding);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Application title bar: pinned to the top on every screen, full width of the page. */
+.app-bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-app-bar);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--app-bar-height);
+  margin: calc(-1 * var(--page-padding)) calc(-1 * var(--page-padding)) var(--page-padding);
+  padding: 0 var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.app-title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2 {
+  line-height: 1.25;
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--text-xl);
+}
+
+h2 {
+  font-size: var(--text-lg);
+}
+
+/* Buttons */
+button {
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  min-height: var(--control-height);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--color-control-hover-bg);
+  border-color: var(--color-muted);
+}
+
+button.primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+/* Destructive: outlined in the list, filled in the confirmation dialog. */
+button.danger {
+  color: var(--color-danger);
+  border-color: var(--color-danger); /* 6.47:1 on white, 5.88:1 on --color-bg */
+}
+
+button.danger:hover:not(:disabled) {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger);
+}
+
+.dialog button.danger {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: var(--color-on-primary);
+}
+
+.dialog button.danger:hover:not(:disabled) {
+  background: var(--color-danger-hover);
+  border-color: var(--color-danger-hover);
+}
+
+button:disabled,
+select:disabled,
+input:disabled,
+textarea:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Declared before the focus-visible group (equal specificity) so the ring below wins for keyboard focus. */
+.dialog:focus {
+  outline: none;
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+.dialog:focus-visible,
+.form-error:focus-visible,
+.page-header h1:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Form controls */
+label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-surface);
+  min-height: var(--control-height);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  max-width: 100%;
+}
+
+textarea {
+  resize: vertical;
+  width: 100%;
+}
+
+input:hover:not(:disabled),
+select:hover:not(:disabled),
+textarea:hover:not(:disabled) {
+  border-color: var(--color-muted);
+}
+
+input[aria-invalid='true'],
+select[aria-invalid='true'],
+textarea[aria-invalid='true'] {
+  border-color: var(--color-danger);
+  box-shadow: inset 0 0 0 1px var(--color-danger);
+}
+
+.field,
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.form-error {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.form-error p {
+  margin: 0;
+}
+
+/* Sign-in card */
+.login {
+  /* Auto margins centre the card in the space below the title bar (#root is a flex column). */
+  width: 100%;
+  max-width: 24rem;
+  margin: auto;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.login h1 {
+  margin-bottom: var(--space-5);
+}
+
+.login button[type='submit'] {
+  width: 100%;
+  margin-top: var(--space-2);
+}
+
+/* Dashboard */
+.tasks-page {
+  width: 100%;
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.notice {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  margin: 0 0 var(--space-4);
+}
+
+.notice-error {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+}
+
+.notice-info {
+  color: var(--color-info-text);
+  background: var(--color-info-bg);
+  border-color: var(--color-info-border);
+}
+
+.page-size {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+}
+
+.page-size input {
+  width: 4.5rem;
+  text-align: center;
+}
+
+.page-size .field-error {
+  flex-basis: 100%;
+}
+
+.state {
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  color: var(--color-muted);
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+
+.state-error {
+  color: var(--color-danger);
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-bg);
+}
+
+.state-error p {
+  margin: 0 0 var(--space-3);
+}
+
+/* Task cards */
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.task-list[aria-busy='true'] {
+  opacity: 0.6;
+}
+
+.task-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-4);
+  transition: box-shadow 0.15s ease;
+}
+
+.task-item:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.task-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+}
+
+.task-title {
+  flex: 1 1 12rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.task-description {
+  margin: var(--space-2) 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.task-meta {
+  margin: var(--space-2) 0 0;
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.task-actions label {
+  color: var(--color-muted);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.task-actions button {
+  max-width: 100%;
+  padding-block: var(--space-2);
+  overflow-wrap: anywhere;
+}
+
+.task-actions select {
+  min-width: 8rem;
+}
+
+/* Status badge: text label plus a distinct marker shape, so it never relies on colour alone. */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 0 0 auto;
+  padding: 0.125rem 0.625rem;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.status-badge::before {
+  content: '';
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  box-sizing: border-box;
+}
+
+.status-badge[data-status='TODO'] {
+  background: var(--status-todo-bg);
+  color: var(--status-todo-text);
+}
+
+.status-badge[data-status='IN_PROGRESS'] {
+  background: var(--status-progress-bg);
+  color: var(--status-progress-text);
+}
+
+.status-badge[data-status='IN_PROGRESS']::before {
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+}
+
+.status-badge[data-status='DONE'] {
+  background: var(--status-done-bg);
+  color: var(--status-done-text);
+}
+
+.status-badge[data-status='DONE']::before {
+  background: currentColor;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.pagination-status {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  min-width: 6.5rem;
+  text-align: center;
+}
+
+/* Dialogs */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  overflow-y: auto;
+  background: rgba(17, 24, 39, 0.55);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 28rem;
+  max-height: 100%;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-5);
+}
+
+.dialog h2 {
+  margin-bottom: var(--space-4);
+}
+
+.dialog p {
+  margin: 0 0 var(--space-5);
+  overflow-wrap: anywhere;
+}
+
+.dialog .field-error,
+.dialog .form-error p {
+  margin-bottom: 0;
+}
+
+.dialog .form-field input,
+.dialog .form-field select,
+.dialog .form-field textarea {
+  width: 100%;
+}
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* Small screens: stack actions and give buttons room. */
+@media (max-width: 30rem) {
+  :root {
+    --page-padding: var(--space-3);
+  }
+
+  .login {
+    padding: var(--space-4);
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions button {
+    flex: 1 1 0;
+  }
+
+  .dialog {
+    padding: var(--space-4);
+  }
+
+  .dialog-actions button {
+    flex: 1 1 8rem;
+  }
+}
+
+/* Windows High Contrast / forced colours: backgrounds and shadows are dropped, so rely on borders, outlines and system colours. */
+@media (forced-colors: active) {
+  button,
+  input,
+  select,
+  textarea {
+    border-color: ButtonText;
+  }
+
+  button:focus-visible,
+  select:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  .dialog:focus-visible,
+  .form-error:focus-visible,
+  .page-header h1:focus-visible {
+    outline: 3px solid Highlight;
+  }
+
+  input[aria-invalid='true'],
+  select[aria-invalid='true'],
+  textarea[aria-invalid='true'] {
+    border-width: 3px;
+  }
+
+  .app-bar,
+  .task-item,
+  .login,
+  .dialog,
+  .notice,
+  .form-error {
+    border: 1px solid CanvasText;
+  }
+
+  .status-badge {
+    border-color: CanvasText;
+  }
+
+  .status-badge::before {
+    border-color: CanvasText;
+    background: transparent; /* TODO: hollow */
+  }
+
+  .status-badge[data-status='IN_PROGRESS']::before {
+    background: linear-gradient(90deg, CanvasText 50%, transparent 50%); /* half */
+  }
+
+  .status-badge[data-status='DONE']::before {
+    background: CanvasText; /* filled */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
