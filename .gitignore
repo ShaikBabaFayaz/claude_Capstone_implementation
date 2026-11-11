@@ -1,3 +1,9 @@
 .pipeline/
 target/
 .vscode/
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+frontend/.vite/
+frontend/.env*
+frontend/coverage/
