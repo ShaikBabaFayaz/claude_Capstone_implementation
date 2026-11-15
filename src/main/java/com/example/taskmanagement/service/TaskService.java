@@ -8,6 +8,7 @@ import com.example.taskmanagement.dto.TaskPatchRequest;
 import com.example.taskmanagement.dto.TaskReplaceRequest;
 import com.example.taskmanagement.dto.TaskResponse;
 import com.example.taskmanagement.repository.TaskRepository;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +54,16 @@ public class TaskService {
     @Transactional
     public TaskResponse replace(Long id, TaskReplaceRequest request) {
         Task task = find(id);
+
+        boolean changed = false;
+        changed |= !Objects.equals(task.getTitle(), request.getTitle());
+        changed |= !Objects.equals(task.getDescription(), request.getDescription());
+        changed |= task.getStatus() != request.getStatus();
+
+        if (!changed) {
+            return TaskResponse.from(task);
+        }
+
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
         task.setStatus(request.getStatus());
@@ -65,16 +76,38 @@ public class TaskService {
         if (request.getTitle() == null && request.getDescription() == null && request.getStatus() == null) {
             throw new EmptyPatchException();
         }
+
         Task task = find(id);
+        boolean changed = false;
+
         if (request.getTitle() != null) {
-            task.setTitle(request.getTitle().orElseThrow(() -> new InvalidPatchException("title")));
+            String newTitle = request.getTitle().orElseThrow(() -> new InvalidPatchException("title"));
+            if (!Objects.equals(task.getTitle(), newTitle)) {
+                task.setTitle(newTitle);
+                changed = true;
+            }
         }
+
         if (request.getDescription() != null) {
-            task.setDescription(request.getDescription().orElse(null));
+            String newDescription = request.getDescription().orElse(null);
+            if (!Objects.equals(task.getDescription(), newDescription)) {
+                task.setDescription(newDescription);
+                changed = true;
+            }
         }
+
         if (request.getStatus() != null) {
-            task.setStatus(request.getStatus().orElseThrow(() -> new InvalidPatchException("status")));
+            TaskStatus newStatus = request.getStatus().orElseThrow(() -> new InvalidPatchException("status"));
+            if (task.getStatus() != newStatus) {
+                task.setStatus(newStatus);
+                changed = true;
+            }
         }
+
+        if (!changed) {
+            return TaskResponse.from(task);
+        }
+
         return TaskResponse.from(taskRepository.saveAndFlush(task));
     }
 
